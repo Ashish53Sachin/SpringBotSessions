@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.util.Map;
+
 
 @RestController
 @RequestMapping("/api")
@@ -25,8 +28,11 @@ public class EmployeeControllers {
         try{
             log.info("adding Employee into DB!!");
             employeeServices.addEmployee(emp);
-            return ResponseEntity.ok("EMPLOYEE ADDED SUCCESSFULLY!!");
+            // Build URI for the new resource
+            URI location = URI.create("/employees/" + emp.getEmpId());
 
+            return ResponseEntity.created(location)
+                    .body("EMPLOYEE ADDED SUCCESSFULLY!!");
         }catch(Exception e)
         {
             log.error("error while adding employee Emp!!");
@@ -47,10 +53,28 @@ public class EmployeeControllers {
 //    }
 
     @GetMapping("emp/{id}")
-    public Employee getEmployeeById(@PathVariable int id) {
+    public ResponseEntity<Employee> getEmployeeById(@PathVariable int id) {
 
         Employee employee = employeeServices.getEmployeeById(id);
-        return ResponseEntity.ok(employee).getBody();
+        return ResponseEntity.ok(employee);
+    }
+
+    @DeleteMapping("emp/{id}")
+    public ResponseEntity<String> delEmployeeById(@PathVariable int id) {
+            employeeServices.deleteEmployeeByID(id);
+        return ResponseEntity.ok("employee is deleted!!");
+    }
+
+    @PutMapping("emp/{id}")
+    public ResponseEntity<String> putEmployeeById(@PathVariable int id, @RequestBody Employee emp) {
+        employeeServices.updateEmployeeById(id, emp);
+        return ResponseEntity.ok("employee is updated!!");
+    }
+
+    @PatchMapping("emp/{id}")
+    public ResponseEntity<String> partialUpdEmployeeById(@PathVariable int id, @RequestBody Map<String, String> updates) {
+        employeeServices.partialUpdateEmployeeById(id, updates);
+        return ResponseEntity.ok("employee is updated!!");
     }
 
 }

@@ -58,6 +58,13 @@ public class ToMapCollectors {
         Bala-[Bala]
         Ram-[Ram, Ram]
          */
+        // Corrected type for counting
+        Map<String, Long> countsMap = allMultipleNames.stream()
+                .collect(Collectors.groupingBy(s -> s, Collectors.counting()));
+
+        countsMap.forEach((k, v) -> System.out.println(k + "-" + v));
+
+
 
 
 
